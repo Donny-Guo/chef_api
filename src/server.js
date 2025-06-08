@@ -19,11 +19,16 @@ app.get('/', (req, res) => {
 
 app.post('/api/claude', async (req, res) => {
   try {
-    const {prompt} = req.body
-    if (!prompt) {
-      return res.status(400).json({"error": "prompt can not be empty"})
+    const {ingredients} = req.body
+    if (!ingredients) {
+      return res.status(400).json({ "error": "ingredients can not be empty"})
     }
+    const ingredientList = ingredients.reduce((res, ingredient) => res + ingredient + ", ", "")
+
+    const prompt = `Give me a recipe with detail instructions based on the following ingredients: ${ingredientList}. Make sure this recipe can be easily picked up by anyone without using oven or stir-fry and finish in 20 minutes. Your response must be in markdown format and should start with: Here's a delicious recipe for.`
+
     // console.log("prompt:", prompt)
+    
     const msg = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
       max_tokens: 1024,
@@ -44,7 +49,6 @@ app.post('/api/claude', async (req, res) => {
     const response = msg.content[0].text
     if (!response) throw new Error("Get no response from Claude API")
     res.status(200).json({ response })
-
   } catch (error) {
     console.error("error getting claude response:", error)
     return res.status(500).json({error: "Internal Server Error"})
