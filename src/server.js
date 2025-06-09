@@ -23,7 +23,7 @@ app.post('/api/claude', async (req, res) => {
     if (!ingredients) {
       return res.status(400).json({ "error": "ingredients can not be empty"})
     }
-    const ingredientList = ingredients.reduce((res, ingredient) => res + ingredient + ", ", "")
+    const ingredientList = ingredients.join(", ")
 
     const prompt = `Give me a recipe with detail instructions based on the following ingredients: ${ingredientList}. Make sure this recipe can be easily picked up by anyone without using oven or stir-fry and finish in 20 minutes. Your response must be in markdown format and should start with: Here's a delicious recipe for.`
 
