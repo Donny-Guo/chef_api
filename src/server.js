@@ -13,8 +13,11 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.status(200).json({message: "the server is running"})
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    "status": "OK",
+    "timestamp": new Date().toISOString(),
+  })
 })
 
 app.post('/api/claude', async (req, res) => {
@@ -46,9 +49,9 @@ app.post('/api/claude', async (req, res) => {
         }
       ]
     })
-    const response = msg.content[0].text
-    if (!response) throw new Error("Get no response from Claude API")
-    res.status(200).json({ response })
+    const recipe = msg.content[0].text
+    if (!recipe) throw new Error("Get no response from Claude API")
+    res.status(200).json({ recipe })
   } catch (error) {
     console.error("error getting claude response:", error)
     return res.status(500).json({error: "Internal Server Error"})
